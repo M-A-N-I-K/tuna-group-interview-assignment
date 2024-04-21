@@ -1,23 +1,30 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Helmet } from "react-helmet";
+import { toast } from "sonner";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form as SignupForm } from "@/components/Form";
 
-import { SignUpSchema } from "../models/SignUpSchema";
-import type { SignUpSchemaType } from "../models/SignUpSchema";
+import { FormSchema } from "../models/FormSchema";
+import type { FormSchemaType } from "../models/FormSchema";
 
 const Register = () => {
 	const {
 		register,
+		reset,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<SignUpSchemaType>({
-		resolver: zodResolver(SignUpSchema),
+	} = useForm<FormSchemaType>({
+		resolver: zodResolver(FormSchema),
 	});
 
-	const onSubmit: SubmitHandler<SignUpSchemaType> = async (data) => {
+	const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
 		console.log(data);
+		if (data.password !== data.confirmPassword) {
+			toast.error("Passwords do not match");
+			return;
+		}
+		reset();
 	};
 
 	return (
@@ -35,6 +42,9 @@ const Register = () => {
 					title="Create Your account"
 					btnText="Register"
 					signup
+					handleSubmit={handleSubmit(onSubmit)}
+					register={register}
+					errors={errors}
 				/>
 			</div>
 		</>

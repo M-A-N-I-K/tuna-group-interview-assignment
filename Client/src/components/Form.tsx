@@ -4,6 +4,7 @@ import { Text } from "@/components/ui/Text";
 import { Input } from "@/components/ui/Input";
 import { Img } from "./ui/Img";
 import { Link } from "react-router-dom";
+import { UseFormRegister, FieldErrors } from "react-hook-form";
 
 interface FormProps {
 	title: string;
@@ -13,6 +14,23 @@ interface FormProps {
 	login?: boolean;
 	signup?: boolean;
 	message?: boolean;
+	handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+	register: UseFormRegister<{
+		email: string;
+		password?: string;
+		phone?: string | undefined;
+		confirmPassword?: string | undefined;
+		name?: string | undefined;
+		message?: string | undefined;
+	}>;
+	errors: FieldErrors<{
+		email: string;
+		password?: string;
+		phone?: string | undefined;
+		confirmPassword?: string | undefined;
+		name?: string | undefined;
+		message?: string | undefined;
+	}>;
 }
 
 export function Form({
@@ -23,10 +41,16 @@ export function Form({
 	signup,
 	image = "images/img_intersect_5.png",
 	message,
+	handleSubmit,
+	register,
+	errors,
 }: FormProps) {
 	return (
 		<>
-			<div className="flex mt-12 flex-col items-start w-full lg:w-[35%] px-12 lg:px-0">
+			<form
+				onSubmit={handleSubmit}
+				className="flex mt-12 flex-col items-start w-full lg:w-[35%] px-12 lg:px-0"
+			>
 				<Heading size="xl" as="h1" className="uppercase !text-indigo-900">
 					{title}
 				</Heading>
@@ -35,58 +59,98 @@ export function Form({
 					<Text size="s" as="p" className="leading-6 !text-blue_gray-400">
 						{subtitle}
 					</Text>
-					<Input
-						shape="square"
-						type="text"
-						name="name"
-						placeholder={`Name*`}
-						className="!text-gray-600 sm:pr-5"
-					/>
+					{message && (
+						<>
+							<Input
+								shape="square"
+								type="text"
+								placeholder={`Name*`}
+								{...register("name")}
+								className="!text-gray-600 sm:pr-5"
+							/>
+							{errors.name && (
+								<p className="text-red-A700 text-sm">
+									{errors.name.message}
+								</p>
+							)}
+						</>
+					)}
 					<Input
 						shape="square"
 						type="email"
-						name="email"
 						placeholder={`Email*`}
 						className="!text-gray-600 sm:pr-5"
+						{...register("email")}
 					/>
+					{errors.email && (
+						<p className="text-red-A700 text-sm">
+							{errors.email.message}
+						</p>
+					)}
 				</div>
-				{signup ||
-					(message && (
+				{!login && (
+					<>
 						<Input
 							shape="square"
 							type="text"
-							name="phone"
 							placeholder={`Phone Number*`}
 							className="mt-[42px] self-stretch sm:pr-5"
+							{...register("phone")}
 						/>
-					))}
-				{signup ||
-					(login && (
+						{errors.phone && (
+							<p className="text-red-A700 text-sm">
+								{errors.phone.message}
+							</p>
+						)}
+					</>
+				)}
+				{!message && (
+					<>
 						<Input
 							shape="square"
 							type="password"
-							name="password"
 							placeholder={`Enter Password*`}
 							className="mt-[42px] self-stretch sm:pr-5"
+							{...register("password")}
 						/>
-					))}
+						{errors.password && (
+							<p className="text-red-A700 text-sm">
+								{errors.password.message}
+							</p>
+						)}
+					</>
+				)}
 				{signup && (
-					<Input
-						shape="square"
-						type="password"
-						name="confirmPassword"
-						placeholder={`Re-enter Password*`}
-						className="mt-[42px] self-stretch sm:pr-5"
-					/>
+					<>
+						<Input
+							shape="square"
+							type="password"
+							placeholder={`Re-enter Password*`}
+							className="mt-[42px] self-stretch sm:pr-5"
+							{...register("confirmPassword")}
+						/>
+						{errors.confirmPassword && (
+							<p className="text-red-A700 text-sm">
+								{errors.confirmPassword.message}
+							</p>
+						)}
+					</>
 				)}
 				{message && (
-					<Input
-						shape="square"
-						type="text"
-						name="message"
-						placeholder={`Message*`}
-						className="mt-[42px] pb-24 self-stretch sm:pr-5"
-					/>
+					<>
+						<Input
+							shape="square"
+							type="text"
+							placeholder={`Message*`}
+							{...register("message")}
+							className="mt-[42px] pb-24 self-stretch sm:pr-5"
+						/>
+						{errors.message && (
+							<p className="text-red-A700 text-sm">
+								{errors.message.message}
+							</p>
+						)}
+					</>
 				)}
 				{login && (
 					<Link to="/" className="mt-[15px] self-end">
@@ -127,7 +191,7 @@ export function Form({
 						</Text>
 					</Link>
 				)}
-			</div>
+			</form>
 			<Img
 				src={image}
 				alt="intersect_one"

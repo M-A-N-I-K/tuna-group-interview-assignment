@@ -2,21 +2,23 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { Helmet } from "react-helmet";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { SignUpSchemaType } from "../models/SignUpSchema";
-import { SignUpSchema } from "../models/SignUpSchema";
+import type { FormSchemaType } from "../models/FormSchema";
+import { FormSchema } from "../models/FormSchema";
 import { Form as MessageForm } from "@/components/Form";
 
 const Message = () => {
 	const {
 		register,
 		handleSubmit,
+		reset,
 		formState: { errors },
-	} = useForm<SignUpSchemaType>({
-		resolver: zodResolver(SignUpSchema),
+	} = useForm<FormSchemaType>({
+		resolver: zodResolver(FormSchema),
 	});
 
-	const onSubmit: SubmitHandler<SignUpSchemaType> = async (data) => {
+	const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
 		console.log(data);
+		reset();
 	};
 
 	return (
@@ -34,6 +36,9 @@ const Message = () => {
 					title="Leave us a message"
 					btnText="Submit"
 					image="images/burger.png"
+					handleSubmit={handleSubmit(onSubmit)}
+					register={register}
+					errors={errors}
 					message
 				/>
 			</div>

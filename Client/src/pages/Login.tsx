@@ -1,7 +1,8 @@
 import { useForm, SubmitHandler } from "react-hook-form";
-import type { SignUpSchemaType } from "../models/SignUpSchema";
-import { SignUpSchema } from "../models/SignUpSchema";
+import type { FormSchemaType } from "../models/FormSchema";
+import { FormSchema } from "../models/FormSchema";
 import { Helmet } from "react-helmet";
+import { toast } from "sonner";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form as LoginForm } from "@/components/Form";
@@ -11,12 +12,13 @@ const Login = () => {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<SignUpSchemaType>({
-		resolver: zodResolver(SignUpSchema),
+	} = useForm<FormSchemaType>({
+		resolver: zodResolver(FormSchema),
 	});
 
-	const onSubmit: SubmitHandler<SignUpSchemaType> = async (data) => {
+	const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
 		console.log(data);
+		toast.success("Login successful");
 	};
 
 	return (
@@ -34,6 +36,9 @@ const Login = () => {
 					title="Login to Your account"
 					btnText="Login"
 					login
+					handleSubmit={handleSubmit(onSubmit)}
+					register={register}
+					errors={errors}
 				/>
 			</div>
 		</>
