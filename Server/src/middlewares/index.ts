@@ -1,55 +1,53 @@
 import express from "express";
-import { get, merge } from "lodash";
-// import {getUserBySessionToken} from "../db/users"
+import jwt from "jsonwebtoken";
+import { PrismaClient } from "@prisma/client";
 
-export const isOwner = async (
-	req: express.Request,
+const prisma = new PrismaClient();
+
+interface CustomRequest extends express.Request {
+	identity?: any;
+}
+
+export const isAuthenticated = async (
+	req: CustomRequest,
 	res: express.Response,
 	next: express.NextFunction
 ) => {
 	try {
-		const { id } = req.params;
+		const sessionToken = req.cookies["AUTH"];
 
-		const currentUserId = get(req, "identity._id") as string;
-
-		if (!currentUserId) {
-			return res.sendStatus(403);
+		if (!sessionToken) {
+			return res
+				.status(403)
+				.json("You need to be logged in to access this resource");
 		}
 
-		if (currentUserId.toString() !== id) {
-			return res.sendStatus(403);
+		const decodedToken: any = jwt.verify(
+			sessionToken,
+			process.env.SESSION_SECRET
+		);
+
+		if (!decodedToken || !decodedToken.userId) {
+			return res
+				.status(403)
+				.json("You need to be logged in to access this resource");
 		}
+
+		const existingUser = await prisma.users.findUnique({
+			where: { user_id: decodedToken.userId },
+		});
+
+		if (!existingUser) {
+			return res
+				.status(403)
+				.json("You need to be logged in to access this resource");
+		}
+
+		req.identity = existingUser;
 
 		next();
 	} catch (error) {
 		console.log(error);
-		res.sendStatus(400);
+		res.status(400).json("You need to be logged in to access this resource");
 	}
 };
-
-// export const isAuthenticated = async (
-// 	req: express.Request,
-// 	res: express.Response,
-// 	next: express.NextFunction
-// ) => {
-// 	try {
-// 		const sessionToken = req.cookies["AUTH"];
-
-// 		if (!sessionToken) {
-// 			return res.sendStatus(403);
-// 		}
-
-// 		const existingUser = await getUserBySessionToken(sessionToken);
-
-// 		if (!existingUser) {
-// 			return res.sendStatus(403);
-// 		}
-
-// 		merge(req, { identity: existingUser });
-
-// 		next();
-// 	} catch (error) {
-// 		console.log(error);
-// 		res.sendStatus(400);
-// 	}
-// };

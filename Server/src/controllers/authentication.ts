@@ -1,60 +1,92 @@
-import express from "express";
-// import { createUser,getUserByEmail } from "../db/users";
-import { authentication, random } from "../helpers";
+import { Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { updateSessionToken } from "../db/users";
 
-// export const login = async (req : express.Request,res : express.Response) =>{
-//     try{
-//         const {email,password} = req.body;
-//         if(!email || !password){
-//             res.sendStatus(400);
-//         }
-//         const user = await getUserByEmail(email).select('+authentication.salt +authentication.password');
-//         if(!user){
-//             return res.sendStatus(400);
-//         }
+const prisma = new PrismaClient();
 
-//         const expectedHash = authentication(user.authentication.salt,password);
+export const login = async (req: Request, res: Response) => {
+	try {
+		const { email, password } = req.body;
+		if (!email || !password) {
+			return res.status(400).json({ error: "Missing fields" });
+		}
+		const user = await prisma.users.findUnique({
+			where: { email },
+		});
+		if (!user) {
+			return res.status(400).json({ error: "User not found" });
+		}
 
-//         if(user.authentication.password !== expectedHash){
-//             return res.sendStatus(403);
-//         }
+		// Verify password
+		const passwordMatch = await bcrypt.compare(password, user.password_hash);
+		if (!passwordMatch) {
+			return res.status(403).json({ error: "Wrong password" });
+		}
 
-//         const salt = random();
-//         user.authentication.sessionToken = authentication(salt,user._id.toString());
+		// Generate JWT
+		const token = jwt.sign({ userId: user.user_id }, process.env.JWT_SECRET);
 
-//         await user.save();
+		// Generate session
+		const sessionToken = jwt.sign(
+			{ userId: user.user_id },
+			process.env.SESSION_SECRET
+		);
 
-//         res.cookie("AUTH",user.authentication.sessionToken,{domain : 'localhost ',path : "/"});
+		// Update session
+		await updateSessionToken(user.user_id, sessionToken);
 
-//         res.status(200).json(user).end();
-//     }
-//     catch(error){
-//         console.log(error);
-//         res.sendStatus(400);
-//     }
-// }
+		// Set cookie
+		res.cookie("AUTH", sessionToken, { domain: "localhost", path: "/" });
 
-// export const register = async (req : express.Request,res : express.Response) =>{
-//     try{
-//         const {username,email,password} = req.body;
-//         if(!username || !email || !password) res.sendStatus(400);
-//         const existingUser = await getUserByEmail(email);
-//         if(existingUser) res.sendStatus(400);
+		res.status(200).json({ user, token }).end();
+	} catch (error) {
+		console.log(error);
+		res.status(400);
+	}
+};
 
-//         const salt = random();
+export const register = async (req: Request, res: Response) => {
+	try {
+		const { email, phone_number, password } = req.body;
+		if (!email || !phone_number || !password) {
+			return res.status(400).json({ error: "Missing fields" });
+		}
 
-//         const user = await createUser({
-//             username,
-//             email,
-//             authentication : {
-//                 salt ,
-//                 password : authentication(salt,password)
-//             }
-//         })
+		const existingUserWithEmail = await prisma.users.findUnique({
+			where: { email },
+		});
 
-//         return res.status(200).json(user).end();
-//     }catch(error){
-//         console.log(error);
-//         res.sendStatus(400);
-//     }
-// }
+		if (existingUserWithEmail) {
+			return res
+				.status(400)
+				.json({ error: "User with this email already exists" });
+		}
+
+		const existingUserWithPhone = await prisma.users.findUnique({
+			where: { phone_number },
+		});
+
+		if (existingUserWithPhone) {
+			return res
+				.status(400)
+				.json({ error: "User with this phone number already exists" });
+		}
+
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		const newUser = await prisma.users.create({
+			data: {
+				email,
+				phone_number,
+				password_hash: hashedPassword,
+			},
+		});
+
+		return res.status(200).json(newUser).end();
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ error: "Internal server error" });
+	}
+};
