@@ -10,7 +10,7 @@ export default function Header() {
 				Tastebites
 			</Text>
 			<div className="mt-[15px] flex w-full items-center justify-between gap-5 self-end md:w-[50%] flex-col md:flex-row md:mt-[0px]">
-				<ul className="flex justify-between items-center gap-[71px] md:gap-8">
+				<ul className="flex justify-between items-center gap-[30px] sm:gap-[45px] md:gap-8">
 					<li>
 						<Link to="/home">
 							<Heading
@@ -22,7 +22,7 @@ export default function Header() {
 						</Link>
 					</li>
 					<li>
-						<Link to="/about">
+						<Link to="#about">
 							<Heading as="h6" className="!text-blue_gray-900">
 								About Us
 							</Heading>
@@ -41,7 +41,7 @@ export default function Header() {
 								color="blue_gray_900_01"
 								variant="fill"
 								shape="round"
-								className="min-w-[160px] font-bold sm:px-5"
+								className="min-w-[120px] sm:min-w-[160px] font-bold sm:px-5"
 							>
 								Login/Register
 							</Button>
