@@ -1,7 +1,9 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Helmet } from "react-helmet";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
+import { useSaveToken } from "@/hooks/save-token";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form as SignupForm } from "@/components/Form";
 
@@ -17,6 +19,8 @@ const Register = () => {
 	} = useForm<FormSchemaType>({
 		resolver: zodResolver(FormSchema),
 	});
+	const navigate = useNavigate();
+	const saveToken = useSaveToken();
 
 	const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
 		console.log(data);
@@ -24,7 +28,31 @@ const Register = () => {
 			toast.error("Passwords do not match");
 			return;
 		}
-		reset();
+
+		try {
+			const response = await fetch("http://localhost:8080/auth/register", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
+			});
+
+			if (!response.ok) {
+				throw new Error("Something went wrong");
+			}
+
+			const jsonData = await response.json();
+			const { token } = jsonData;
+
+			saveToken(token);
+
+			reset();
+			toast.success("Account created successfully");
+			navigate("/home");
+		} catch (error) {
+			toast.error("Something went wrong");
+		}
 	};
 
 	return (

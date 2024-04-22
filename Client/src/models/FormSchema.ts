@@ -6,7 +6,7 @@ export const FormSchema = z.object({
 		.min(1, { message: "Email address is required" })
 		.trim()
 		.email({ message: "Invalid email address" }),
-	phone: z.optional(
+	phone_number: z.optional(
 		z
 			.string()
 			.min(10, { message: "Phone numbers are minimum of 10 digits" })

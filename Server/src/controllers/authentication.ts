@@ -38,9 +38,19 @@ export const login = async (req: Request, res: Response) => {
 		await updateSessionToken(user.user_id, sessionToken);
 
 		// Set cookie
-		res.cookie("AUTH", sessionToken, { domain: "localhost", path: "/" });
+		res.cookie("AUTH", sessionToken, {
+			domain: "localhost",
+			path: "/",
+			sameSite: "none",
+			secure: true,
+		});
 
-		res.status(200).json({ user, token }).end();
+		const userWithoutPassword = {
+			...user,
+			password_hash: undefined as any,
+		};
+
+		res.status(200).json({ user: userWithoutPassword, token }).end();
 	} catch (error) {
 		console.log(error);
 		res.status(400);
@@ -81,6 +91,12 @@ export const register = async (req: Request, res: Response) => {
 				email,
 				phone_number,
 				password_hash: hashedPassword,
+			},
+			select: {
+				user_id: true,
+				email: true,
+				phone_number: true,
+				created_at: true,
 			},
 		});
 

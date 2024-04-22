@@ -1,9 +1,23 @@
 import { Button } from "./ui/Button";
 import { Heading } from "./ui/Heading";
 import { Text } from "./ui/Text";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import { useAuthState } from "@/hooks/use-auth-state";
+import { useLogout } from "@/hooks/remove-token";
+import { toast } from "sonner";
 
 export default function Header() {
+	const isAuthenticated = useAuthState();
+	const logout = useLogout();
+	const navigate = useNavigate();
+
+	const handleClick = () => {
+		logout();
+		toast.success("Logged out successfully");
+		navigate("/");
+	};
+
 	return (
 		<header className="flex items-center flex-col justify-between bg-white-A700 shadow-xs my-2 px-12 md:flex-row lg:px-24 py-4">
 			<Text size="lg" as="p" className="!font-yesteryear">
@@ -36,16 +50,28 @@ export default function Header() {
 						</Link>
 					</li>
 					<li>
-						<Link to="/">
+						{!isAuthenticated ? (
+							<Link to="/">
+								<Button
+									color="blue_gray_900_01"
+									variant="fill"
+									shape="round"
+									className="min-w-[120px] sm:min-w-[160px] font-bold sm:px-5"
+								>
+									Login/Register
+								</Button>
+							</Link>
+						) : (
 							<Button
+								onClick={handleClick}
 								color="blue_gray_900_01"
 								variant="fill"
 								shape="round"
 								className="min-w-[120px] sm:min-w-[160px] font-bold sm:px-5"
 							>
-								Login/Register
+								Logout
 							</Button>
-						</Link>
+						)}
 					</li>
 				</ul>
 			</div>

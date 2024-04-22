@@ -3,22 +3,51 @@ import type { FormSchemaType } from "../models/FormSchema";
 import { FormSchema } from "../models/FormSchema";
 import { Helmet } from "react-helmet";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form as LoginForm } from "@/components/Form";
+import { useSaveToken } from "@/hooks/save-token";
 
 const Login = () => {
 	const {
 		register,
 		handleSubmit,
+		reset,
 		formState: { errors },
 	} = useForm<FormSchemaType>({
 		resolver: zodResolver(FormSchema),
 	});
+	const navigate = useNavigate();
+	const saveToken = useSaveToken();
 
 	const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
 		console.log(data);
-		toast.success("Login successful");
+		try {
+			const response = await fetch("http://localhost:8080/auth/login", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
+			});
+
+			if (!response.ok) {
+				throw new Error("Login failed");
+			}
+
+			const jsonData = await response.json();
+			console.log(jsonData);
+
+			const { token } = jsonData;
+			saveToken(token);
+			reset();
+			navigate("/home");
+			toast.success("Login successful");
+		} catch (error) {
+			console.log(error);
+			toast.error("Login failed");
+		}
 	};
 
 	return (

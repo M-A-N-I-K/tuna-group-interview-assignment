@@ -18,7 +18,7 @@ interface FormProps {
 	register: UseFormRegister<{
 		email: string;
 		password?: string;
-		phone?: string | undefined;
+		phone_number?: string | undefined;
 		confirmPassword?: string | undefined;
 		name?: string | undefined;
 		message?: string | undefined;
@@ -26,7 +26,7 @@ interface FormProps {
 	errors: FieldErrors<{
 		email: string;
 		password?: string;
-		phone?: string | undefined;
+		phone_number?: string | undefined;
 		confirmPassword?: string | undefined;
 		name?: string | undefined;
 		message?: string | undefined;
@@ -95,11 +95,11 @@ export function Form({
 							type="text"
 							placeholder={`Phone Number*`}
 							className="mt-[42px] self-stretch sm:pr-5"
-							{...register("phone")}
+							{...register("phone_number")}
 						/>
-						{errors.phone && (
+						{errors.phone_number && (
 							<p className="text-red-A700 text-sm">
-								{errors.phone.message}
+								{errors.phone_number.message}
 							</p>
 						)}
 					</>
