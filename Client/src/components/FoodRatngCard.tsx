@@ -12,7 +12,7 @@ interface FoodRatingCardProps {
 
 const FoodRatingCard = ({ info, index }: FoodRatingCardProps) => {
 	return (
-		<Link to="/" target="_blank">
+		<Link to="/recipe" target="_blank">
 			<div
 				key={"listratingbar" + index}
 				className="flex w-full flex-col items-start gap-[18px]"
