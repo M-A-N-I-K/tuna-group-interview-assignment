@@ -6,6 +6,17 @@
 
 This project is a client-server architecture Food Recipe App web application built using TypeScript, Express.js, Prisma, React, and other technologies. It provides a structured setup for creating a full-stack application where the client interacts with the server via RESTful APIs.
 
+### Technologies Used
+- **Prisma**: Database toolkit for TypeScript and Node.js, used for database access and schema management.
+- **Node.js**: JavaScript runtime environment for server-side development.
+- **Express.js**: Web application framework for Node.js, used for building RESTful APIs.
+- **TypeScript**: Typed superset of JavaScript, providing enhanced code quality and tooling.
+- **PostgreSQL**: Open-source relational database management system, used as the project's database.
+- **React**: JavaScript library for building user interfaces, used for the client-side development.
+- **Tailwind CSS**: Utility-first CSS framework, used for styling the client-side components.
+- **Zod**: TypeScript-first schema declaration and validation library, used for input validation.
+- **React Hook Form**: Lightweight form validation library for React, used for form handling on the client-side.
+
 ### Prerequisites
 
 Before setting up the project, ensure you have the following installed:
