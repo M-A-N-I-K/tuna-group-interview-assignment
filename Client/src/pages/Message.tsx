@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { FormSchemaType } from "../models/FormSchema";
 import { FormSchema } from "../models/FormSchema";
 import { Form as MessageForm } from "@/components/Form";
+import { toast } from "sonner";
 
 const Message = () => {
 	const {
@@ -17,6 +18,7 @@ const Message = () => {
 	});
 
 	const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
+		toast.success("Message sent successfully");
 		reset();
 	};
 

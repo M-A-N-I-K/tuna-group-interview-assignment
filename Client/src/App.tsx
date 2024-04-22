@@ -1,17 +1,18 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "sonner";
+import { lazy, Suspense } from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Login from "./pages/Login";
-import Home from "./pages/Home";
-import Register from "./pages/Register";
-import Message from "./pages/Message";
-import RecipePage from "./pages/Recipe";
 import ErrorBoundary from "./components/Wrappers/ErrorBoundary";
 import Error from "./components/Error";
-import { Toaster } from "sonner";
 import TokenProvider from "./context/TokenProvider";
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import About from "./pages/About";
+const Register = lazy(() => import("./pages/Register"));
+const Message = lazy(() => import("./pages/Message"));
+const RecipePage = lazy(() => import("./pages/Recipe"));
+const Home = lazy(() => import("./pages/Home"));
+const About = lazy(() => import("./pages/About"));
 
 function App() {
 	return (
@@ -37,7 +38,9 @@ function App() {
 						path="/home"
 						element={
 							<ErrorBoundary>
-								<Home />
+								<Suspense fallback={<div>Loading...</div>}>
+									<Home />
+								</Suspense>
 							</ErrorBoundary>
 						}
 					/>
@@ -45,7 +48,9 @@ function App() {
 						path="/register"
 						element={
 							<ErrorBoundary>
-								<Register />
+								<Suspense fallback={<div>Loading...</div>}>
+									<Register />
+								</Suspense>
 							</ErrorBoundary>
 						}
 					/>
@@ -53,7 +58,9 @@ function App() {
 						path="/message"
 						element={
 							<ErrorBoundary>
-								<Message />
+								<Suspense fallback={<div>Loading...</div>}>
+									<Message />
+								</Suspense>
 							</ErrorBoundary>
 						}
 					/>
@@ -61,7 +68,9 @@ function App() {
 						path="/recipe"
 						element={
 							<ErrorBoundary>
-								<RecipePage />
+								<Suspense fallback={<div>Loading...</div>}>
+									<RecipePage />
+								</Suspense>
 							</ErrorBoundary>
 						}
 					/>
@@ -69,7 +78,9 @@ function App() {
 						path="/about"
 						element={
 							<ErrorBoundary>
-								<About />
+								<Suspense fallback={<div>Loading...</div>}>
+									<About />
+								</Suspense>
 							</ErrorBoundary>
 						}
 					/>
