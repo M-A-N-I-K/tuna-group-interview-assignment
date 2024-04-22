@@ -17,7 +17,6 @@ const Message = () => {
 	});
 
 	const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
-		console.log(data);
 		reset();
 	};
 

@@ -36,7 +36,7 @@ export default function Header() {
 						</Link>
 					</li>
 					<li>
-						<Link to="#about">
+						<Link to="/about">
 							<Heading as="h6" className="!text-blue_gray-900">
 								About Us
 							</Heading>

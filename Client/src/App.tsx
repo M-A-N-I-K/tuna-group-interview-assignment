@@ -5,12 +5,13 @@ import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Message from "./pages/Message";
 import RecipePage from "./pages/Recipe";
-import ErrorBoundary from "./components/ErrorBoundary";
+import ErrorBoundary from "./components/Wrappers/ErrorBoundary";
 import Error from "./components/Error";
 import { Toaster } from "sonner";
 import TokenProvider from "./context/TokenProvider";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import About from "./pages/About";
 
 function App() {
 	return (
@@ -61,6 +62,14 @@ function App() {
 						element={
 							<ErrorBoundary>
 								<RecipePage />
+							</ErrorBoundary>
+						}
+					/>
+					<Route
+						path="/about"
+						element={
+							<ErrorBoundary>
+								<About />
 							</ErrorBoundary>
 						}
 					/>

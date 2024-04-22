@@ -22,7 +22,6 @@ const Login = () => {
 	const saveToken = useSaveToken();
 
 	const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
-		console.log(data);
 		try {
 			const response = await fetch("http://localhost:8080/auth/login", {
 				method: "POST",

@@ -23,7 +23,6 @@ const Register = () => {
 	const saveToken = useSaveToken();
 
 	const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
-		console.log(data);
 		if (data.password !== data.confirmPassword) {
 			toast.error("Passwords do not match");
 			return;

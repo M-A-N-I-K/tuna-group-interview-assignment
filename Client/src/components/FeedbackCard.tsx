@@ -2,7 +2,7 @@ import { Img } from "./ui/Img";
 import { Heading } from "./ui/Heading";
 import { Text } from "./ui/Text";
 
-const LatestRecipePostCard = () => {
+const FeedbackCard = () => {
 	return (
 		<div className="flex flex-1 flex-col items-center border border-solid border-gray-300 pb-5 md:pb-[50px]">
 			<Img
@@ -48,4 +48,4 @@ const LatestRecipePostCard = () => {
 	);
 };
 
-export default LatestRecipePostCard;
+export default FeedbackCard;
